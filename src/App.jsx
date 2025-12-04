@@ -11,7 +11,8 @@ import {
   ArrowRight,
   Microscope,
   FlaskConical,
-  Send
+  Send,
+  X
 } from 'lucide-react';
 
 // This will be moved inside the component
@@ -55,6 +56,7 @@ const PropertyCard = ({ name, status, desc, image }) => (
 const App = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [chatSrc, setChatSrc] = useState('/help');
+  const [selectedMember, setSelectedMember] = useState(null);
 
   // Handle scroll for navbar transparency effect
   useEffect(() => {
@@ -76,6 +78,30 @@ const App = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const teamData = [
+    {
+      name: "Pete Currington",
+      title: "Operations Leadership",
+      desc: "Overseeing all mining operations with a focus on efficiency, safety, and sustainable extraction practices.",
+      image: "https://site-assets.plasmic.app/df7bfec0441b23581822834c9fc596fa.jpg",
+      extendedBio: "Pete Currington brings over 30 years of experience in mining operations. Starting from the ground up in various mines across Nevada and Arizona, he has developed a deep expertise in operational efficiency, safety protocols, and sustainable mining practices. His leadership has been instrumental in implementing cutting-edge technology in traditional mining operations, resulting in significant improvements in productivity and environmental compliance. Pete holds multiple certifications in mining safety and environmental management, and has been recognized by industry associations for his contributions to sustainable mining practices."
+    },
+    {
+      name: "Ken Currington",
+      title: "Strategic Leadership",
+      desc: "Driving strategic vision and investor relations, ensuring long-term growth and profitability.",
+      image: "https://site-assets.plasmic.app/8b433aaf03fee8407942f737f95e15e6.jpg",
+      extendedBio: "Ken Currington is a seasoned executive with a background in business development and investor relations. With a Master's in Business Administration and extensive experience in the natural resources sector, he has successfully led multiple ventures from exploration to production. His strategic vision focuses on long-term value creation, building strong partnerships with investors, and navigating the complex regulatory landscape of mineral extraction. Ken has served on several industry boards and has been instrumental in securing funding for numerous mining projects through his extensive network in the financial community."
+    },
+    {
+      name: "Ben Simoncini",
+      title: "Lead Prospector & Geologist",
+      desc: "Known for his legendary 'Golden Eye' — an unparalleled talent for identifying high-yield properties rich in gold and silver.",
+      image: "https://site-assets.plasmic.app/7cd1ccc69b7ca4fb9e231f721d3c5b99.jpg",
+      extendedBio: "Ben Simoncini is renowned in the industry as the 'Golden Eye' prospector. With decades of field experience in mineral exploration, he has discovered numerous high-value deposits across the American West. His unique ability to interpret geological formations and identify promising sites has led to several successful mining operations. Ben combines traditional prospecting wisdom with modern geophysical techniques to maximize discovery potential. He holds advanced degrees in geology and has published numerous papers on mineral deposit formation and exploration methodologies. His expertise in both surface and subsurface prospecting has made him an invaluable asset to our team."
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-200 font-sans selection:bg-amber-500 selection:text-stone-900">
@@ -179,35 +205,38 @@ const App = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => {
-              const teamData = i === 1 ? {
-                name: "Pete Currington",
-                title: "Operations Leadership",
-                desc: "Overseeing all mining operations with a focus on efficiency, safety, and sustainable extraction practices.",
-                image: "https://site-assets.plasmic.app/df7bfec0441b23581822834c9fc596fa.jpg"
-              } : i === 2 ? {
-                name: "Ken Currington",
-                title: "Strategic Leadership",
-                desc: "Driving strategic vision and investor relations, ensuring long-term growth and profitability.",
-                image: "https://site-assets.plasmic.app/8b433aaf03fee8407942f737f95e15e6.jpg"
-              } : {
-                name: "Ben Simoncini",
-                title: "Lead Prospector & Geologist",
-                desc: "Known for his legendary 'Golden Eye' — an unparalleled talent for identifying high-yield properties rich in gold and silver.",
-                image: "https://site-assets.plasmic.app/7cd1ccc69b7ca4fb9e231f721d3c5b99.jpg"
-              } ;
-
-              return (
-                <div key={i} className="group bg-stone-900 border border-stone-800 p-6 rounded-xl hover:border-amber-500/50 transition-all duration-300">
-                  <div className="w-24 h-24 rounded-full bg-stone-800 mb-4 mx-auto overflow-hidden border-2 border-stone-700 group-hover:border-amber-500">
-                    <img src={teamData.image} alt="Team Member" />
-                  </div>
-                  <h3 className="text-xl font-bold text-center text-white">{teamData.name}</h3>
-                  <p className="text-amber-500 text-center text-sm mb-4">{teamData.title}</p>
-                  <p className="text-stone-400 text-sm text-center">{teamData.desc}</p>
+            {teamData.map((member, index) => (
+              <div key={index} className="group bg-stone-900 border border-stone-800 p-6 rounded-xl hover:border-amber-500/50 transition-all duration-300 cursor-pointer" onClick={() => setSelectedMember(index)}>
+                <div className="w-24 h-24 rounded-full bg-stone-800 mb-4 mx-auto overflow-hidden border-2 border-stone-700 group-hover:border-amber-500">
+                  <img src={member.image} alt="Team Member" />
                 </div>
-              );
-            })}
+                <h3 className="text-xl font-bold text-center text-white">{member.name}</h3>
+                <p className="text-amber-500 text-center text-sm mb-4">{member.title}</p>
+                <p className="text-stone-400 text-sm text-center">{member.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Slide-in Bio Panel */}
+          <div className={`fixed top-0 right-0 h-full w-2/5 bg-stone-900 border-l border-stone-800 z-50 transform transition-transform duration-300 ${selectedMember !== null ? 'translate-x-0' : 'translate-x-full'}`}>
+            {selectedMember !== null && (
+              <div className="p-8 h-full overflow-y-auto">
+                <div className="flex justify-between items-start mb-6">
+                  <h2 className="text-2xl font-bold text-white">{teamData[selectedMember].name}</h2>
+                  <button
+                    onClick={() => setSelectedMember(null)}
+                    className="text-stone-400 hover:text-white transition-colors"
+                  >
+                    <X size={24} />
+                  </button>
+                </div>
+                <div className="w-32 h-32 rounded-full bg-stone-800 mb-6 mx-auto overflow-hidden border-2 border-stone-700">
+                  <img src={teamData[selectedMember].image} alt={teamData[selectedMember].name} className="w-full h-full object-cover" />
+                </div>
+                <h3 className="text-xl font-semibold text-amber-500 text-center mb-4">{teamData[selectedMember].title}</h3>
+                <p className="text-stone-300 text-lg leading-relaxed">{teamData[selectedMember].extendedBio}</p>
+              </div>
+            )}
           </div>
         </section>
 
