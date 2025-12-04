@@ -32,8 +32,8 @@ const NavCard = ({ icon, title, desc, onClick }) => (
 );
 
 // Helper Component for Property Cards
-const PropertyCard = ({ name, status, desc, image }) => (
-  <div className="group bg-stone-900 border border-stone-800 rounded-xl overflow-hidden hover:border-amber-500/50 transition-all">
+const PropertyCard = ({ name, status, desc, image, onClick }) => (
+  <div className="group bg-stone-900 border border-stone-800 rounded-xl overflow-hidden hover:border-amber-500/50 transition-all cursor-pointer" onClick={onClick}>
     <div className="h-48 overflow-hidden relative">
       <div className="absolute inset-0 bg-stone-900/20 group-hover:bg-transparent transition-all z-10"></div>
       <img src={image} alt={name} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" />
@@ -57,6 +57,7 @@ const App = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [chatSrc, setChatSrc] = useState('/help');
   const [selectedMember, setSelectedMember] = useState(null);
+  const [selectedProperty, setSelectedProperty] = useState(null);
 
   // Handle scroll for navbar transparency effect
   useEffect(() => {
@@ -100,6 +101,39 @@ const App = () => {
       desc: "Known for his legendary 'Golden Eye' — an unparalleled talent for identifying high-yield properties rich in gold and silver.",
       image: "https://site-assets.plasmic.app/7cd1ccc69b7ca4fb9e231f721d3c5b99.jpg",
       extendedBio: "Ben Simoncini is renowned in the industry as the 'Golden Eye' prospector. With decades of field experience in mineral exploration, he has discovered numerous high-value deposits across the American West. His unique ability to interpret geological formations and identify promising sites has led to several successful mining operations. Ben combines traditional prospecting wisdom with modern geophysical techniques to maximize discovery potential. He holds advanced degrees in geology and has published numerous papers on mineral deposit formation and exploration methodologies. His expertise in both surface and subsurface prospecting has made him an invaluable asset to our team."
+    }
+  ];
+
+  const propertiesData = [
+    {
+      name: "The Courbet",
+      status: "CURRENT FLAGSHIP",
+      desc: "Our primary excavation and analysis site featuring promising early-stage returns. Advanced mapping currently underway.",
+      image: "https://site-assets.plasmic.app/5155759d1ad1f278bc8eef4c0c17d24f.jpg",
+      location: "Nevada, USA",
+      acreage: "500 acres",
+      goldOunces: "Estimated 50,000 ounces of gold",
+      extendedInfo: "The Courbet is our flagship property located in the heart of Nevada's gold belt. Recent assay reports have confirmed significant gold mineralization with grades averaging 0.5 oz/ton. The property features excellent infrastructure with road access and proximity to processing facilities. Advanced mapping using our proprietary Maps 1580 technology has identified multiple high-priority drill targets. Exploration is ongoing with systematic sampling and geophysical surveys."
+    },
+    {
+      name: "Jungo Canyon",
+      status: "Up-and-Coming",
+      desc: "High potential geological formations identified in preliminary scans.",
+      image: "https://site-assets.plasmic.app/c23c0a5ad405836e4cfd269d36c905e1.jpg",
+      location: "Arizona, USA",
+      acreage: "320 acres",
+      goldOunces: "Estimated 15,000 ounces of gold",
+      extendedInfo: "Jungo Canyon represents an exciting new discovery in Arizona's mineral-rich terrain. Preliminary geophysical surveys have identified strong magnetic anomalies indicative of gold-bearing structures. Surface sampling has returned encouraging results with gold values up to 2.5 g/t. The property is located in a historically productive mining district with excellent potential for bulk tonnage gold deposits. Further exploration including drilling is planned for the coming quarter."
+    },
+    {
+      name: "Benita Canyon",
+      status: "Exploration Phase",
+      desc: "Adjacent to historic lodes, Benita Canyon represents our next frontier.",
+      image: "https://images.unsplash.com/photo-1533496078747-817343e7486f?q=80&w=1000&auto=format&fit=crop",
+      location: "Nevada, USA",
+      acreage: "280 acres",
+      goldOunces: "Estimated 8,000 ounces of gold",
+      extendedInfo: "Benita Canyon is situated adjacent to historic mining operations that produced over 100,000 ounces of gold in the early 1900s. Our modern exploration techniques have identified extensions of the original lodes with significant untapped potential. Recent soil sampling has outlined a 2km gold-in-soil anomaly with values exceeding 500 ppb. The property benefits from existing infrastructure and is poised for rapid advancement to drilling stage."
     }
   ];
 
@@ -218,7 +252,7 @@ const App = () => {
           </div>
 
           {/* Slide-in Bio Panel */}
-          <div className={`fixed top-0 right-0 h-full w-2/5 bg-stone-900 border-l border-stone-800 z-50 transform transition-transform duration-300 ${selectedMember !== null ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className={`fixed top-0 right-0 h-full w-2/5 bg-stone-900 border-l border-stone-800 z-50 transform transition-transform duration-300 ${(selectedMember !== null || selectedProperty !== null) ? 'translate-x-0' : 'translate-x-full'}`}>
             {selectedMember !== null && (
               <div className="p-8 h-full overflow-y-auto">
                 <div className="flex justify-between items-start mb-6">
@@ -237,6 +271,40 @@ const App = () => {
                 <p className="text-stone-300 text-lg leading-relaxed">{teamData[selectedMember].extendedBio}</p>
               </div>
             )}
+            {selectedProperty !== null && (
+              <div className="p-8 h-full overflow-y-auto">
+                <div className="flex justify-between items-start mb-6">
+                  <h2 className="text-2xl font-bold text-white">{propertiesData[selectedProperty].name}</h2>
+                  <button
+                    onClick={() => setSelectedProperty(null)}
+                    className="text-stone-400 hover:text-white transition-colors"
+                  >
+                    <X size={24} />
+                  </button>
+                </div>
+                <div className="w-full h-48 mb-6 overflow-hidden rounded-lg border-2 border-stone-700">
+                  <img src={propertiesData[selectedProperty].image} alt={propertiesData[selectedProperty].name} className="w-full h-full object-cover" />
+                </div>
+                <div className="mb-4">
+                  <span className="px-3 py-1 bg-amber-600 text-white text-xs font-bold rounded-full">{propertiesData[selectedProperty].status}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-stone-800 p-4 rounded-lg">
+                    <h4 className="text-amber-500 font-semibold mb-1">Location</h4>
+                    <p className="text-stone-300">{propertiesData[selectedProperty].location}</p>
+                  </div>
+                  <div className="bg-stone-800 p-4 rounded-lg">
+                    <h4 className="text-amber-500 font-semibold mb-1">Acreage</h4>
+                    <p className="text-stone-300">{propertiesData[selectedProperty].acreage}</p>
+                  </div>
+                  <div className="bg-stone-800 p-4 rounded-lg col-span-2">
+                    <h4 className="text-amber-500 font-semibold mb-1">Estimated Gold</h4>
+                    <p className="text-stone-300">{propertiesData[selectedProperty].goldOunces}</p>
+                  </div>
+                </div>
+                <p className="text-stone-300 text-lg leading-relaxed">{propertiesData[selectedProperty].extendedInfo}</p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -252,7 +320,7 @@ const App = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Primary Property */}
-            <div className="lg:col-span-2 relative group overflow-hidden rounded-2xl border border-stone-700">
+            <div className="lg:col-span-2 relative group overflow-hidden rounded-2xl border border-stone-700 cursor-pointer" onClick={() => setSelectedProperty(0)}>
               <div className="absolute inset-0 bg-stone-900/40 group-hover:bg-stone-900/20 transition-all z-10"></div>
               <img
                 src="https://site-assets.plasmic.app/5155759d1ad1f278bc8eef4c0c17d24f.jpg"
@@ -272,12 +340,14 @@ const App = () => {
               status="Up-and-Coming"
               desc="High potential geological formations identified in preliminary scans."
               image="https://site-assets.plasmic.app/c23c0a5ad405836e4cfd269d36c905e1.jpg"
+              onClick={() => setSelectedProperty(1)}
             />
             <PropertyCard
               name="Benita Canyon"
               status="Exploration Phase"
               desc="Adjacent to historic lodes, Benita Canyon represents our next frontier."
               image="https://images.unsplash.com/photo-1533496078747-817343e7486f?q=80&w=1000&auto=format&fit=crop"
+              onClick={() => setSelectedProperty(2)}
             />
           </div>
         </section>
